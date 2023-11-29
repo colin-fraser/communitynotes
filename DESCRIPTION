@@ -12,3 +12,5 @@ LazyData: true
 RoxygenNote: 7.2.3
 Imports: 
     rlang
+URL: https://github.com/colin-fraser/communitynotes
+BugReports: https://github.com/colin-fraser/communitynotes/issues
