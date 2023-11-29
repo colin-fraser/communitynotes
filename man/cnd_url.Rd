@@ -4,7 +4,14 @@
 \alias{cnd_url}
 \title{Generate the URL to download a Community Notes data set}
 \usage{
-cnd_url(year, month, day, dataset, number, date = NULL)
+cnd_url(
+  year = NULL,
+  month = NULL,
+  day = NULL,
+  dataset = c("notes", "ratings", "noteStatusHistory", "userEnrollment"),
+  number = 0,
+  date = NULL
+)
 }
 \description{
 Generate the URL to download a Community Notes data set

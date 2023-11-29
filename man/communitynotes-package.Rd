@@ -4,8 +4,20 @@
 \name{communitynotes-package}
 \alias{communitynotes}
 \alias{communitynotes-package}
-\title{communitynotes: What the Package Does (Title Case)}
+\title{communitynotes: Work With The Community Notes Public Datasets}
 \description{
-More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
+Download and read the public community notes datasets and parse the fields.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/colin-fraser/communitynotes}
+  \item Report bugs at \url{https://github.com/colin-fraser/communitynotes/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Colin Fraser \email{colin.r.fraser@gmail.com}
+
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_datasets.R
 \name{download_dataset}
 \alias{download_dataset}
-\title{Download a community notes dataset}
+\title{Download a Community Notes dataset}
 \usage{
 download_dataset(
   year,
@@ -17,6 +17,36 @@ download_dataset(
   is_increment = FALSE
 )
 }
+\arguments{
+\item{year}{The year of the Community Notes dataset.}
+
+\item{month}{The month of the Community Notes dataset.}
+
+\item{day}{The day of the Community Notes dataset.}
+
+\item{dataset}{The type of dataset to download. Choose from "notes," "ratings,"
+"noteStatusHistory," or "userEnrollment." Defaults to "notes."}
+
+\item{number}{The dataset number. Defaults to 0.}
+
+\item{download_to}{The directory where the dataset will be downloaded.
+Defaults to NULL, which results in the dataset being saved in the current working directory.}
+
+\item{increment}{Try to fetch the next number once the current download is complete?}
+
+\item{overwrite}{Overwrite existing files in this directory?}
+
+\item{verbose}{Show progress and status?}
+
+\item{is_increment}{Is this an is an increment attempt? attempt.
+In general you don't need to touch this; it's used internally.}
+}
+\value{
+An invisible response object representing the outcome of the download request.
+}
 \description{
-Download a community notes dataset
+This function allows you to download a Community Notes dataset for a specific
+year, month, and day. You can specify the type of dataset (e.g., "notes,"
+"ratings," "noteStatusHistory," or "userEnrollment") and the dataset number,
+which should usually be zero.
 }

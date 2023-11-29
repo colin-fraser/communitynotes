@@ -1,6 +1,6 @@
 #' Convert millisecond timestamp to datetime
 #' @export
-millis_to_datetime <- function(x, tz = 'UTC') {
+millis_to_datetime <- function(x, tz = "UTC") {
   lubridate::as_datetime(x / 1000, tz = tz)
 }
 
@@ -12,8 +12,8 @@ datetime_to_millis <- function(x) {
 
 #' Convert a Twitter Snowflake ID to the associated create date
 #' @export
-id_to_datetime <- function(x, tz = 'UTC') {
-  lubridate::as_datetime((as.numeric(x) / 2 ^ 22 + 1288834974657) / 1000, tz = tz)
+id_to_datetime <- function(x, tz = "UTC") {
+  lubridate::as_datetime((as.numeric(x) / 2^22 + 1288834974657) / 1000, tz = tz)
 }
 
 #' Generate a URL for a tweetId
@@ -30,7 +30,9 @@ go_to_tweet <- function(x) {
 }
 
 #' Read the notes file
+#'
 #' @export
+#' @import readr
 read_notes_file <- function(filename) {
   readr::read_tsv(
     filename,
@@ -150,10 +152,11 @@ read_user_enrollment_file <- function(filename) {
 
 choose_reader <- function(filetype) {
   switch(filetype,
-       notes = read_notes_file,
-       ratings = read_ratings_file,
-       noteStatusHistory = read_note_status_history_file,
-       userEnrollment = read_user_enrollment_file)
+    notes = read_notes_file,
+    ratings = read_ratings_file,
+    noteStatusHistory = read_note_status_history_file,
+    userEnrollment = read_user_enrollment_file
+  )
 }
 
 #' Read any community notes data file
@@ -166,7 +169,7 @@ read_community_notes_file <- function(filename) {
 #' Read all the community notes data set files of a certain type out of a directory, concatenating
 #' multiple files together
 #' @export
-read_and_concat <- function(directory, filetype = c('notes',  'ratings', 'noteStatusHistory', 'userEnrollment'),
+read_and_concat <- function(directory, filetype = c("notes", "ratings", "noteStatusHistory", "userEnrollment"),
                             warn_for_filesize = 1e9) {
   filetype <- match.arg(filetype)
   files <- fs::dir_ls(directory, regexp = filetype)
@@ -175,16 +178,18 @@ read_and_concat <- function(directory, filetype = c('notes',  'ratings', 'noteSt
     if (filesize > warn_for_filesize) {
       n <- length(files)
       stopifnot("User cancel" = usethis::ui_yeah("The {n} files in '{directory}' matching {filetype} take up {filesize}, which might be more data than you want to load into memory at once. Do you want to continue? (Suppress this message in the future by setting warn_for_filesize = Inf)",
-                       shuffle = FALSE, n_no = 1))
+        shuffle = FALSE, n_no = 1
+      ))
     }
   }
   read_func <- switch(filetype,
-                      notes = read_notes_file,
-                      ratings = read_ratings_file,
-                      noteStatusHistory = read_note_status_history_file,
-                      userEnrollment = read_user_enrollment_file)
+    notes = read_notes_file,
+    ratings = read_ratings_file,
+    noteStatusHistory = read_note_status_history_file,
+    userEnrollment = read_user_enrollment_file
+  )
   purrr::map(files, read_func) |>
-    purrr::list_rbind(names_to = 'file')
+    purrr::list_rbind(names_to = "file")
 }
 
 #' Automatically format community notes data set files using preset transformations
@@ -192,9 +197,10 @@ read_and_concat <- function(directory, filetype = c('notes',  'ratings', 'noteSt
 #' Adds columns for tweet create dates, tweet URLs, and datetime columns for all 'Millis' columns
 #'
 #' @export
+#' @import dplyr
 auto_format <- function(x, tz = NULL) {
   x |>
-    dplyr::mutate(
+    mutate(
       across(
         contains("tweetId"),
         list(

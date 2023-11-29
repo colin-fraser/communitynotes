@@ -1,8 +1,10 @@
 DATASETS <- c("notes", "ratings", "noteStatusHistory", "userEnrollment")
 
 #' Generate the URL to download a Community Notes data set
-#' @export
-cnd_url <- function(year, month, day, dataset, number, date = NULL) {
+#'
+cnd_url <- function(year = NULL, month = NULL, day = NULL, dataset = c("notes", "ratings", "noteStatusHistory", "userEnrollment"),
+                    number = 0, date = NULL) {
+  dataset <- match.arg(dataset)
   if (!is.null(date)) {
     year <- lubridate::year(date)
     month <- lubridate::month(date)
@@ -34,7 +36,7 @@ go_to_download_page <- function() {
 
 #' Find the latest data set
 #' @export
-latest_data <- function(dataset =c("notes", "ratings", "noteStatusHistory", "userEnrollment"), start_search = Sys.Date() + 2) {
+latest_data <- function(dataset = c("notes", "ratings", "noteStatusHistory", "userEnrollment"), start_search = Sys.Date() + 2) {
   dataset <- match.arg(dataset)
   start_search <- as.Date(start_search)
 
@@ -97,7 +99,29 @@ fetch <- function(url, write_to, verbose, overwrite) {
   resp
 }
 
-#' Download a community notes dataset
+#' Download a Community Notes dataset
+#'
+#' This function allows you to download a Community Notes dataset for a specific
+#' year, month, and day. You can specify the type of dataset (e.g., "notes,"
+#' "ratings," "noteStatusHistory," or "userEnrollment") and the dataset number,
+#' which should usually be zero.
+#'
+#' @param year The year of the Community Notes dataset.
+#' @param month The month of the Community Notes dataset.
+#' @param day The day of the Community Notes dataset.
+#' @param dataset The type of dataset to download. Choose from "notes," "ratings,"
+#'   "noteStatusHistory," or "userEnrollment." Defaults to "notes."
+#' @param number The dataset number. Defaults to 0.
+#' @param download_to The directory where the dataset will be downloaded.
+#'   Defaults to NULL, which results in the dataset being saved in the current working directory.
+#' @param increment Try to fetch the next number once the current download is complete?
+#' @param overwrite Overwrite existing files in this directory?
+#' @param verbose Show progress and status?
+#' @param is_increment Is this an is an increment attempt? attempt.
+#'   In general you don't need to touch this; it's used internally.
+#'
+#' @return An invisible response object representing the outcome of the download request.
+#'
 #' @export
 download_dataset <- function(year,
                              month,
@@ -118,8 +142,10 @@ download_dataset <- function(year,
   if (!is_increment) {
     httr::stop_for_status(resp)
   } else {
-    if (httr::http_error(resp) && verbose) {
-      message(paste0("No dataset at ", url, ". This probably means you've downloaded all the datasets."))
+    if (httr::http_error(resp)) {
+      if (verbose) {
+        message(paste0("No dataset at ", url, ". This probably means you've downloaded all the datasets."))
+      }
       return(invisible(resp))
     }
   }
@@ -135,12 +161,13 @@ download_dataset <- function(year,
 download_all_data <- function(date = Sys.Date(), download_to = NULL, verbose = TRUE, overwrite = FALSE) {
   for (dataset in DATASETS) {
     download_dataset(lubridate::year(date),
-                     lubridate::month(date),
-                     lubridate::day(date),
-                     dataset,
-                     download_to = download_to,
-                     verbose = verbose,
-                     overwrite = overwrite,
-                     increment = TRUE)
+      lubridate::month(date),
+      lubridate::day(date),
+      dataset,
+      download_to = download_to,
+      verbose = verbose,
+      overwrite = overwrite,
+      increment = TRUE
+    )
   }
 }
