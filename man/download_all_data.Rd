@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_datasets.R
 \name{download_all_data}
 \alias{download_all_data}
-\title{Download all datasets for a given date}
+\title{Download all data sets for a given date}
 \usage{
 download_all_data(
   date = Sys.Date(),
@@ -11,6 +11,20 @@ download_all_data(
   overwrite = FALSE
 )
 }
+\arguments{
+\item{date}{The date for which you want to download data sets. Defaults to today (Sys.Date()).}
+
+\item{download_to}{The directory where the data sets will be downloaded. Defaults to NULL,
+which results in the data sets being saved in the current working directory.}
+
+\item{verbose}{A logical value indicating whether to display progress and status messages.
+Defaults to TRUE.}
+
+\item{overwrite}{A logical value indicating whether to overwrite existing dataset files
+in the specified directory. Defaults to FALSE.}
+}
 \description{
-Download all datasets for a given date
+This function allows you to download all four Community Notes data sets (notes, ratings,
+noteStatusHistory, and userEnrollment) for a specified date (defaulting to today). The data sets
+will be saved to the specified directory, or the current working directory if not specified.
 }

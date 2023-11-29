@@ -156,11 +156,25 @@ download_dataset <- function(year,
   invisible(resp)
 }
 
-#' Download all datasets for a given date
+#' Download all data sets for a given date
+#'
+#' This function allows you to download all four Community Notes data sets (notes, ratings,
+#' noteStatusHistory, and userEnrollment) for a specified date (defaulting to today). The data sets
+#' will be saved to the specified directory, or the current working directory if not specified.
+#'
+#' @param date The date for which you want to download data sets. Defaults to today (Sys.Date()).
+#' @param download_to The directory where the data sets will be downloaded. Defaults to NULL,
+#'   which results in the data sets being saved in the current working directory.
+#' @param verbose A logical value indicating whether to display progress and status messages.
+#'   Defaults to TRUE.
+#' @param overwrite A logical value indicating whether to overwrite existing dataset files
+#'   in the specified directory. Defaults to FALSE.
+#'
 #' @export
 download_all_data <- function(date = Sys.Date(), download_to = NULL, verbose = TRUE, overwrite = FALSE) {
   for (dataset in DATASETS) {
-    download_dataset(lubridate::year(date),
+    download_dataset(
+      lubridate::year(date),
       lubridate::month(date),
       lubridate::day(date),
       dataset,
