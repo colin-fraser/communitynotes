@@ -6,6 +6,11 @@
 \usage{
 tweet_url(x)
 }
+\arguments{
+\item{x}{tweetId}
+}
 \description{
-Generate a URL for a tweetId
+Note that this won't be the direct URL for the tweet, but it will provide a URL that
+you can follow to get to the tweet. This is more of a convenience function for investigation
+rather than a canonical URL for the tweet.
 }

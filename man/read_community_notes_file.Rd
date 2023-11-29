@@ -4,7 +4,10 @@
 \alias{read_community_notes_file}
 \title{Read any community notes data file}
 \usage{
-read_community_notes_file(filename)
+read_community_notes_file(
+  filename,
+  filetype = c("detect", "notes", "ratings", "noteStatusHistory", "userEnrollment")
+)
 }
 \description{
 Read any community notes data file

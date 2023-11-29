@@ -2,10 +2,19 @@
 % Please edit documentation in R/read.R
 \name{auto_format}
 \alias{auto_format}
-\title{Automatically format community notes data set files using preset transformations}
+\title{Automatically Format Community Notes Data Set Files}
 \usage{
 auto_format(x, tz = NULL)
 }
+\arguments{
+\item{x}{The data frame to be formatted.}
+
+\item{tz}{The time zone to apply to the datetime conversions.}
+}
+\value{
+A formatted data frame with additional columns.
+}
 \description{
-Adds columns for tweet create dates, tweet URLs, and datetime columns for all 'Millis' columns
+Automatically formats community notes data set files with preset transformations.
+This function adds columns for tweet creation dates, tweet URLs, and datetime columns for all 'Millis' columns.
 }

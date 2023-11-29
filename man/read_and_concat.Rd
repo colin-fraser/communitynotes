@@ -2,8 +2,7 @@
 % Please edit documentation in R/read.R
 \name{read_and_concat}
 \alias{read_and_concat}
-\title{Read all the community notes data set files of a certain type out of a directory, concatenating
-multiple files together}
+\title{Read and Concatenate Community Notes Data Files}
 \usage{
 read_and_concat(
   directory,
@@ -11,7 +10,19 @@ read_and_concat(
   warn_for_filesize = 1e+09
 )
 }
+\arguments{
+\item{directory}{The directory from which to read the files.}
+
+\item{filetype}{Type of the files to read, one of "notes", "ratings", "noteStatusHistory", "userEnrollment".}
+
+\item{warn_for_filesize}{Threshold file size in bytes for warning the user.
+Defaults to 1e9 (1 GB). Set to Inf to disable warning.}
+}
+\value{
+A data frame with all data from the specified file type concatenated.
+}
 \description{
-Read all the community notes data set files of a certain type out of a directory, concatenating
-multiple files together
+Reads all community notes data set files of a specified type from a directory,
+concatenating multiple files into a single data frame. You'll be warned if the resulting
+file will be quite large. To disable the warning, set warn_for_filesize = Inf.
 }

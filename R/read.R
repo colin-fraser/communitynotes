@@ -1,38 +1,84 @@
-#' Convert millisecond timestamp to datetime
-#' @export
-millis_to_datetime <- function(x, tz = "UTC") {
+#' Convert between millisecond timestamp and datetime
+#'
+#'
+#' @rdname millis-datetime-conversion
+#'
+#'
+#' @param x For `millis_to_datetime`, the millisecond timestamp to convert.
+#'          For `datetime_to_millis`, the datetime object to convert.
+#' @param tz The time zone to apply to the resulting datetime.
+#'           Relevant only for `millis_to_datetime`.
+#'
+#' @return For `millis_to_datetime`, a datetime object.
+#'         For `datetime_to_millis`, a millisecond timestamp.
+#'
+#' @examples
+#' millis_to_datetime(1609459200000) # Converts to datetime
+#' datetime_to_millis(as.POSIXct("2021-01-01 UTC")) # Converts to millis
+#' 1609459200000 == datetime_to_millis(millis_to_datetime(1609459200000)) # TRUE
+#'
+#' @export millis_to_datetime
+#' @export datetime_to_millis
+millis_to_datetime <- function(x, tz = NULL) {
   lubridate::as_datetime(x / 1000, tz = tz)
 }
 
-#' Convert datetime to millisecond timestamp
-#' @export
 datetime_to_millis <- function(x) {
   as.integer(x) * 1000
 }
 
-#' Convert a Twitter Snowflake ID to the associated create date
+#' Convert a Twitter Snowflake ID to the associated creation date
+#'
+#' This function converts a Twitter Snowflake ID to the datetime of its creation.
+#'
+#' @param x The Twitter Snowflake ID to convert.
+#' @param tz The time zone to apply to the resulting datetime.
+#'
+#' @return A datetime object representing the creation time of the Twitter Snowflake ID.
+#'
 #' @export
-id_to_datetime <- function(x, tz = "UTC") {
+id_to_datetime <- function(x, tz = NULL) {
   lubridate::as_datetime((as.numeric(x) / 2^22 + 1288834974657) / 1000, tz = tz)
 }
 
 #' Generate a URL for a tweetId
+#'
+#' Note that this won't be the direct URL for the tweet, but it will provide a URL that
+#' you can follow to get to the tweet. This is more of a convenience function for investigation
+#' rather than a canonical URL for the tweet.
+#'
+#' @param x tweetId
 #' @export
 tweet_url <- function(x) {
   paste0("https://twitter.com/twitter/status/", x)
 }
 
 #' Go to a Tweet in your browser
+#'
+#' Opens a tweet in your browser
+#'
+#' @param x a tweetId
 #' @export
 go_to_tweet <- function(x) {
   stopifnot(length(x) == 1)
   browseURL(tweet_url(x))
 }
 
-#' Read the notes file
+#' Read community notes datasets
 #'
-#' @export
+#' Reads and correctly formats the data files. You probably just want to use read_comunity_notes_file.
+#'
+#' @param filename the filename of the file to read
+#' @param filetype either 'detect' to automatically detect, or one of 'notes', 'ratings', 'userEnrollment'
+#'   or 'noteStatusHistory'
+#'
 #' @import readr
+#'
+#' @export read_community_notes_file
+#' @export read_note_status_history_file
+#' @export read_user_enrollment_file
+#' @export read_notes_file
+#' @export read_ratings_file
 read_notes_file <- function(filename) {
   readr::read_tsv(
     filename,
@@ -64,8 +110,6 @@ read_notes_file <- function(filename) {
   )
 }
 
-#' Read the ratings file
-#' @export
 read_ratings_file <- function(filename) {
   readr::read_tsv(
     filename,
@@ -161,13 +205,27 @@ choose_reader <- function(filetype) {
 
 #' Read any community notes data file
 #' @export
-read_community_notes_file <- function(filename) {
-  filetype <- stringr::str_extract(filename, "notes|noteStatusHistory|ratings|userEnrollment")
+read_community_notes_file <- function(filename, filetype = c('detect', 'notes', 'ratings', 'noteStatusHistory', 'userEnrollment')) {
+  filetype <- match.arg(filetype)
+  if (filetype == 'detect') {
+    filetype <- stringr::str_extract(filename, "notes|noteStatusHistory|ratings|userEnrollment")
+  }
   choose_reader(filetype)(filename)
 }
 
-#' Read all the community notes data set files of a certain type out of a directory, concatenating
-#' multiple files together
+#' Read and Concatenate Community Notes Data Files
+#'
+#' Reads all community notes data set files of a specified type from a directory,
+#' concatenating multiple files into a single data frame. You'll be warned if the resulting
+#' file will be quite large. To disable the warning, set warn_for_filesize = Inf.
+#'
+#' @param directory The directory from which to read the files.
+#' @param filetype Type of the files to read, one of "notes", "ratings", "noteStatusHistory", "userEnrollment".
+#' @param warn_for_filesize Threshold file size in bytes for warning the user.
+#'                          Defaults to 1e9 (1 GB). Set to Inf to disable warning.
+#'
+#' @return A data frame with all data from the specified file type concatenated.
+#'
 #' @export
 read_and_concat <- function(directory, filetype = c("notes", "ratings", "noteStatusHistory", "userEnrollment"),
                             warn_for_filesize = 1e9) {
@@ -182,19 +240,20 @@ read_and_concat <- function(directory, filetype = c("notes", "ratings", "noteSta
       ))
     }
   }
-  read_func <- switch(filetype,
-    notes = read_notes_file,
-    ratings = read_ratings_file,
-    noteStatusHistory = read_note_status_history_file,
-    userEnrollment = read_user_enrollment_file
-  )
+  read_func <- choose_reader(filetype)
   purrr::map(files, read_func) |>
     purrr::list_rbind(names_to = "file")
 }
 
-#' Automatically format community notes data set files using preset transformations
+#' Automatically Format Community Notes Data Set Files
 #'
-#' Adds columns for tweet create dates, tweet URLs, and datetime columns for all 'Millis' columns
+#' Automatically formats community notes data set files with preset transformations.
+#' This function adds columns for tweet creation dates, tweet URLs, and datetime columns for all 'Millis' columns.
+#'
+#' @param x The data frame to be formatted.
+#' @param tz The time zone to apply to the datetime conversions.
+#'
+#' @return A formatted data frame with additional columns.
 #'
 #' @export
 #' @import dplyr

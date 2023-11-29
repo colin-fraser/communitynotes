@@ -6,6 +6,9 @@
 \usage{
 go_to_tweet(x)
 }
+\arguments{
+\item{x}{a tweetId}
+}
 \description{
-Go to a Tweet in your browser
+Opens a tweet in your browser
 }

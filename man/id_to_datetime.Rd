@@ -2,10 +2,18 @@
 % Please edit documentation in R/read.R
 \name{id_to_datetime}
 \alias{id_to_datetime}
-\title{Convert a Twitter Snowflake ID to the associated create date}
+\title{Convert a Twitter Snowflake ID to the associated creation date}
 \usage{
-id_to_datetime(x, tz = "UTC")
+id_to_datetime(x, tz = NULL)
+}
+\arguments{
+\item{x}{The Twitter Snowflake ID to convert.}
+
+\item{tz}{The time zone to apply to the resulting datetime.}
+}
+\value{
+A datetime object representing the creation time of the Twitter Snowflake ID.
 }
 \description{
-Convert a Twitter Snowflake ID to the associated create date
+This function converts a Twitter Snowflake ID to the datetime of its creation.
 }

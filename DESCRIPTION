@@ -18,7 +18,8 @@ Imports:
     readr,
     rlang,
     stringr,
-    usethis
+    usethis,
+    utils
 URL: https://github.com/colin-fraser/communitynotes
 BugReports: https://github.com/colin-fraser/communitynotes/issues
 Suggests: 

@@ -2,10 +2,16 @@
 % Please edit documentation in R/read.R
 \name{read_notes_file}
 \alias{read_notes_file}
-\title{Read the notes file}
+\title{Read community notes datasets}
 \usage{
 read_notes_file(filename)
 }
+\arguments{
+\item{filename}{the filename of the file to read}
+
+\item{filetype}{either 'detect' to automatically detect, or one of 'notes', 'ratings', 'userEnrollment'
+or 'noteStatusHistory'}
+}
 \description{
-Read the notes file
+Reads and correctly formats the data files. You probably just want to use read_comunity_notes_file.
 }
