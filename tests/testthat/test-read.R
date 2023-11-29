@@ -5,3 +5,7 @@ test_that("millis_to_datetime converts millisecond timestamp to datetime", {
   expect_equal(converted_datetime, expected_datetime)
   expect_equal(datetime_to_millis(expected_datetime), millis_timestamp)
 })
+
+test_that("tweet_url generates correct URL", {
+  expect_equal(tweet_url("12345"), "https://twitter.com/twitter/status/12345")
+})
