@@ -1,7 +1,7 @@
 Package: communitynotes
 Type: Package
 Title: Work With The Community Notes Public Datasets
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: person("Colin", "Fraser", email = "colin.r.fraser@gmail.com", role = c("aut", "cre"))
 Description: Download and read the public community notes datasets and parse the fields.
 License: MIT + file LICENSE
