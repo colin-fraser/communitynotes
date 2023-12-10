@@ -1,0 +1,112 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# communitynotes
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+Simple package for working with the public Community Notes datsaets. 
+
+## Installation
+
+You can install the development version of communitynotes from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("colin-fraser/communitynotes")
+```
+
+## Downloading the datasets
+
+Simple functions for downloading the datasets. The easiest thing is to just use `download_all_data`. This will automatically save all the latest datasets to a directory.
+
+```{r example}
+library(communitynotes)
+dir <- tempdir()
+download_all_data(date = Sys.Date(), download_to = dir)
+```
+## Working with the datasets
+
+The datasets are saved as `.tsv` files, so you can easily just work with them directly like any other file. However, the package has some helpers for working with these datasets more effectively.
+
+If you read a file with `read_community_notes_file` it will automatically choose good column types, for example leaving IDs as character columns.
+
+```{r}
+library(dplyr)
+notes <- read_community_notes_file(paste(dir, "2023-12-10-notes-00000.tsv", sep = '/'))
+glimpse(notes)
+```
+
+The Community Notes datasets have dates formatted as milliseconds since the epoch; there's a function for reading these.
+
+```{r}
+notes |> 
+  transmute(createdAtMillis, createdAt_datetime = millis_to_datetime(createdAtMillis))
+```
+
+There's also a function implementing a little-known trick for extracting create dates from `tweetId`s.
+
+```{r}
+notes |> 
+  transmute(tweetId, tweet_created_at = id_to_datetime(tweetId))
+```
+
+If you apply `auto_format` to a Community Notes dataset, it will automatically apply these mutations to the relevant columns. It will also provide a handy tweet URL which, while not the canonical tweet URL, will lead you to the correct tweet due to some funky server logic that Twitter does for tweet ID URLs.
+
+```{r}
+notes |> 
+  auto_format() |> 
+  select(noteId, tweetId, createdAt_datetime, tweet_create_datetime, tweet_url)
+```
+
+## Working with the huge ratings dataset
+
+In the last few months the Community Notes data has started to get quite large. The ratings file now comes in chunks. There is a function for reading these chunks and concatenating them into a single data frame. As of this writing, these take up over 3 gigabytes, so you may want to be careful using this.
+
+```{r eval=FALSE}
+ratings <- read_and_concat(dir, "ratings", warn_for_filesize = Inf) # `warn_for_filesize = Inf` disables a check that would prevent the user from loading an enormous file into memory.
+```
+
+As an alternative to loading this enormous data frame into memory, there is (currently experimental) support for loading it into a duckdb database.
+
+```{r}
+duck_db_connection <- build_cn_db(dir)
+```
+As an example, here's how to use this to find the 20 notes which received the most ratings on 2023-12-07 and its associated tweet.
+
+```{r}
+library(DBI)
+top_notes <- dbGetQuery(duck_db_connection, 
+"select 
+noteId,  
+tweetId, 
+notes.createdAtMillis,
+summary,
+count(*) as ratings
+from notes inner join ratings
+using(noteId)
+where notes.createdAtMillis between 1701907200000 and 1701993600000
+group by 1, 2, 3, 4
+order by ratings desc
+limit 20
+"
+)
+top_notes |> 
+  mutate(across(c(noteId, tweetId), format, digits = 20)) |> 
+  auto_format() |> 
+  gt::gt()
+```
+

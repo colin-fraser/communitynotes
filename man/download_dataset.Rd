@@ -38,7 +38,7 @@ Defaults to NULL, which results in the dataset being saved in the current workin
 
 \item{verbose}{Show progress and status?}
 
-\item{is_increment}{Is this an is an increment attempt? attempt.
+\item{is_increment}{Is this an is an increment attempt?
 In general you don't need to touch this; it's used internally.}
 }
 \value{

@@ -22,6 +22,7 @@ Imports:
     utils
 URL: https://github.com/colin-fraser/communitynotes
 BugReports: https://github.com/colin-fraser/communitynotes/issues
-Suggests: 
-    testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Suggests: 
+    duckdb,
+    testthat

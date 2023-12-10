@@ -117,7 +117,7 @@ fetch <- function(url, write_to, verbose, overwrite) {
 #' @param increment Try to fetch the next number once the current download is complete?
 #' @param overwrite Overwrite existing files in this directory?
 #' @param verbose Show progress and status?
-#' @param is_increment Is this an is an increment attempt? attempt.
+#' @param is_increment Is this an is an increment attempt?
 #'   In general you don't need to touch this; it's used internally.
 #'
 #' @return An invisible response object representing the outcome of the download request.
@@ -144,7 +144,7 @@ download_dataset <- function(year,
   } else {
     if (httr::http_error(resp)) {
       if (verbose) {
-        message(paste0("No dataset at ", url, ". This probably means you've downloaded all the datasets."))
+        rlang::inform(paste0("No dataset at ", url, ". This probably means you've downloaded all the ", dataset, " datasets for today."))
       }
       return(invisible(resp))
     }
